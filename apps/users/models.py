@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -8,11 +7,11 @@ from django.contrib.auth.models import AbstractUser
 
 class UserProfile(AbstractUser):
     nick_name = models.CharField(max_length=50, verbose_name='昵称',default='')
-    birday = models.DateField(verbose_name='生日', blank=True)
-    gender = models.CharField(max_length=5,choices=(('male','男'),('female','女')),default='female')
-    address = models.CharField(max_length=500,default='')
-    mobile = models.CharField(max_length=11,blank=True)
-    image = models.ImageField(upload_to='image/%Y/%m',default="image/default.png",max_length=100)
+    birthday = models.DateField(verbose_name='生日', null=True, blank=True)
+    gender = models.CharField(max_length=6, choices=(('male', '男'), ('female', '女')), default='female')
+    address = models.CharField(max_length=500, default='')
+    mobile = models.CharField(max_length=11, null=True, blank=True)
+    image = models.ImageField(upload_to='image/%Y/%m', default="image/default.png", max_length=100)
 
     class Meta:
         verbose_name = "用户信息"
@@ -21,25 +20,34 @@ class UserProfile(AbstractUser):
     def __str__(self):
         return self.username
 
+
 class EmailVerifyRecord(models.Model):
-    code = models.CharField(max_length=20,verbose_name='验证码')
-    email = models.EmailField(max_length=50,verbose_name='邮箱')
-    send_type = models.CharField(max_length=10,choices=(('register','注册'),('forget','找回密码')))
-    send_time = models.DateField(default=datetime.now())
+    code = models.CharField(max_length=20, verbose_name='验证码')
+    email = models.EmailField(max_length=50, verbose_name='邮箱')
+    send_type = models.CharField(max_length=10, choices=(('register', '注册'), ('forget', '找回密码')), default='注册',
+                                 verbose_name='类型')
+    send_time = models.DateField(default=timezone.now, verbose_name='发送时间')
 
     class Meta:
         verbose_name = '邮箱验证码'
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return '{0}:{1}'.format(self.email,self.code)
+
+
 class Banner(models.Model):
-    title = models.CharField(max_length=100,verbose_name='标题')
-    image = models.ImageField(upload_to="banner/%Y/%m",verbose_name='轮播图',max_length=100)
-    url = models.URLField(max_length=200,verbose_name='访问地址')
-    index = models.IntegerField(default=100,verbose_name='顺序')
-    add_time = models.DateField(default=datetime.now(),verbose_name='添加时间')
+    title = models.CharField(max_length=100, verbose_name='标题')
+    image = models.ImageField(upload_to="banner/%Y/%m", verbose_name='轮播图', max_length=100)
+    url = models.URLField(max_length=200, verbose_name='访问地址')
+    index = models.IntegerField(default=100, verbose_name='顺序')
+    add_time = models.DateField(default=timezone.now, verbose_name='添加时间')
 
     class Meta:
         verbose_name = '轮播图'
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.title
 
 

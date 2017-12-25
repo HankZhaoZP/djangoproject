@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from django.utils import timezone
 from django.db import models
 
 # Create your models here.
@@ -8,11 +7,14 @@ from django.db import models
 class CityDict(models.Model):
     name = models.CharField(max_length=50, verbose_name='城市名')
     desc = models.TextField(verbose_name='描述')
-    add_time = models.DateField(default=datetime.now())
+    add_time = models.DateField(default=timezone.now)
 
     class Meta:
         verbose_name = '城市'
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return '{0}:{1}'.format(self.name, self.desc)
 
 
 class CourseOrg(models.Model):
@@ -28,6 +30,9 @@ class CourseOrg(models.Model):
         verbose_name = '课程机构'
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.name
+
 
 class Teacher(models.Model):
     org = models.ForeignKey(CourseOrg, verbose_name='所属机构')
@@ -38,8 +43,11 @@ class Teacher(models.Model):
     points = models.CharField(max_length=50, verbose_name='教学特点')
     click_num = models.IntegerField(default=0, verbose_name='点击数')
     fav_num = models.IntegerField(default=0, verbose_name='收藏数')
-    add_time = models.DateField(default=datetime.now())
+    add_time = models.DateField(default=timezone.now)
 
     class Meta:
         verbose_name = '课程教师'
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
