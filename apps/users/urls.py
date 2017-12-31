@@ -4,8 +4,9 @@
 
 from django.conf.urls import url
 
-from apps.users.views import LoginView
+from apps.users.views import LoginView, RegisterView
 
 urlpatterns = [
+    url(r'^register/$', RegisterView.as_view(), name='register'),
     url(r'^login/$', LoginView.as_view(), name='login')
 ]

@@ -22,6 +22,6 @@ import xadmin
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
-    url(r'^register/$', TemplateView.as_view(template_name='register.html'), name='register'),
-    url(r'', include('apps.users.urls', namespace='apps.users'))
+    url(r'', include('apps.users.urls', namespace='apps.users')),
+    url(r'^captcha/', include('captcha.urls'))
 ]

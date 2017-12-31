@@ -3,9 +3,10 @@ from django.contrib.auth import authenticate,login
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic.base import View
+from django.contrib.auth.hashers import make_password
 
-from .models import UserProfile
-from .forms import LoginForm
+from .models import UserProfile, EmailVerifyRecord
+from .forms import LoginForm, RegisterForm
 
 
 class CustomBackennd(ModelBackend):
@@ -20,6 +21,49 @@ class CustomBackennd(ModelBackend):
 # Create your views here.
 
 
+class AciveUserView(View):
+    def get(self, request, active_code):
+        all_records = EmailVerifyRecord.objects.filter(code=active_code)
+        if all_records:
+            for record in all_records:
+                email = record.email
+                user = UserProfile.objects.get(email=email)
+                user.is_active = True
+                user.save()
+
+        return render(request, 'login.html', context={})
+
+    def post(self, request):
+        pass
+
+
+class RegisterView(View):
+    def get(self, request):
+        register_form = RegisterForm()
+        return render(request, "register.html", context={
+            'register_form': register_form
+        })
+
+    def post(self, request):
+        register_form = RegisterForm(request.POST)
+        if register_form.is_valid():
+            email = request.POST.get("email", "")
+            password = request.POST.get("password", "")
+
+            user_porfile = UserProfile()
+            user_porfile.username = email
+            user_porfile.email = email
+            user_porfile.password = make_password(password)
+            user_porfile.is_active = False
+            user_porfile.save()
+
+            return render(request, "login.html", context={})
+        else:
+            return render(request, "register.html", context={
+                'register_form': register_form
+            })
+
+
 class LoginView(View):
     def get(self, request):
         return render(request, "login.html", context={})
@@ -31,8 +75,13 @@ class LoginView(View):
             user_password = request.POST.get("password", "")
             user = authenticate(username=user_name, password=user_password)
             if user is not None:
-                login(request, user)
-                return render(request, "index.html")
+                if user.is_active:
+                    login(request, user)
+                    return render(request, "index.html")
+                else:
+                    return render(request, "login.html", context={
+                        'msg': '账户未激活'
+                    })
             else:
                 return render(request, "login.html", context={
                     'msg': '用户名或密码错误'

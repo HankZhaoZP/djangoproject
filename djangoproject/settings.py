@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.organization',
     'extra_apps.xadmin',
     'crispy_forms',
+    'captcha',
 ]
 AUTH_USER_MODEL = "users.UserProfile"
 
@@ -123,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'Asia/shanghai'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
