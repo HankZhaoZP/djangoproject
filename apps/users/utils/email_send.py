@@ -11,7 +11,7 @@ from djangoproject.settings import EMAIL_FROM
 from random import Random
 
 
-def send_register_email(email, send_type="register"):
+def send_type_email(email, send_type="register"):
     email_record = EmailVerifyRecord()
     code = random_str(16)
 
@@ -20,14 +20,17 @@ def send_register_email(email, send_type="register"):
     email_record.send_type = send_type
     email_record.save()
 
-    email_title = '账户激活邮件'
-    email_body = '邮件内容出错'
+    email_title = '邮件标题'
+    email_body = '邮件内容'
 
     if send_type == "register":
         email_title = "账户激活邮件"
         email_body = "请点击链接激活你的账号：http://127.0.0.1:8000/active/{0}".format(code)
+    elif send_type == "forget":
+        email_title = "找回密码邮件"
+        email_body = "请点击链接更改你的账户密码：http://127.0.0.1:8000/reset/{0}".format(code)
 
-    send_email(email_title, email_body, email)
+    return send_email(email_title, email_body, email)
 
 
 def random_str(randomlength=8):
@@ -48,8 +51,6 @@ def send_email(email_title, email_body, email_address):
         [email_address],
         fail_silently='False'
     )
-
-    if send_status:
-        pass
+    return send_status
 
 
