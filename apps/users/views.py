@@ -7,9 +7,10 @@ from django.contrib.auth.hashers import make_password
 
 from .models import UserProfile, EmailVerifyRecord
 from .forms import LoginForm, RegisterForm
+from .utils.email_send import send_register_email
 
 
-class CustomBackennd(ModelBackend):
+class CustomBackend(ModelBackend):
     def authenticate(self, username=None, password=None, **kwargs):
         try:
             user = UserProfile.objects.get(Q(username=username) | Q(email=username))
@@ -21,7 +22,7 @@ class CustomBackennd(ModelBackend):
 # Create your views here.
 
 
-class AciveUserView(View):
+class ActiveUserView(View):
     def get(self, request, active_code):
         all_records = EmailVerifyRecord.objects.filter(code=active_code)
         if all_records:
@@ -57,6 +58,7 @@ class RegisterView(View):
             user_porfile.is_active = False
             user_porfile.save()
 
+            send_register_email(email, "register")
             return render(request, "login.html", context={})
         else:
             return render(request, "register.html", context={
@@ -91,18 +93,3 @@ class LoginView(View):
                 'login_form': login_form
             })
 
-
-# def user_login(request):
-#     if request.method == "POST":
-#         user_name = request.POST.get("username", "")
-#         user_password = request.POST.get("password", "")
-#         user = authenticate(username=user_name, password=user_password)
-#
-#         if user is not None:
-#             login(request, user)
-#             return render(request, "index.html")
-#         else:
-#             return render(request, "login.html", context={})
-#
-#     elif request.method == "GET":
-#         return render(request,"login.html",context={})

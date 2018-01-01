@@ -4,9 +4,10 @@
 
 from django.conf.urls import url
 
-from apps.users.views import LoginView, RegisterView
+from apps.users.views import LoginView, RegisterView, ActiveUserView
 
 urlpatterns = [
     url(r'^register/$', RegisterView.as_view(), name='register'),
-    url(r'^login/$', LoginView.as_view(), name='login')
+    url(r'^login/$', LoginView.as_view(), name='login'),
+    url(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name='active')
 ]
