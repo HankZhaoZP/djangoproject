@@ -30,7 +30,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 AUTHENTICATION_BACKENDS = (
-    'apps.users.views.CustomBackennd',
+    'apps.users.views.CustomBackend',
 )
 
 # Application definition
@@ -92,10 +92,10 @@ DATABASES = {
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',
         'NAME': "djangotest",
-        'USER':"root",
-        'PASSWORD':"root",
-        'HOST':"207.148.67.119",
-        'PORT':"3306",
+        'USER': "root",
+        'PASSWORD': "root",
+        'HOST': "207.148.67.119",
+        'PORT': "3306",
     }
 }
 
